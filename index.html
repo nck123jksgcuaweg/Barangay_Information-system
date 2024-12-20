@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Information System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1f2739;
+            --secondary-color: #f5f5f5;
+            --accent-color: #666666;
+            --text-color: #333333;
+            --text-color-light: #ffffff;
+            --highlight-color: #999999;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+        }
+
+        .dark-mode {
+            --primary-color: #1a1a1a;
+            --secondary-color: #333333;
+            --accent-color: #666666;
+            --text-color: #f5f5f5;
+            --text-color-light: #ffffff;
+            --highlight-color: #999999;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--secondary-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .admin-info {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .admin-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            border: 3px solid var(--accent-color);
+        }
+
+        .sidebar-menu {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-menu a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, padding-left 0.3s;
+        }
+
+        .sidebar-menu a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: var(--accent-color);
+            padding-left: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-color);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color-light);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: var(--text-color-light);
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 5px 15px;
+            margin-right: 20px;
+        }
+
+        .search-bar input {
+            background: none;
+            border: none;
+            color: var(--text-color-light);
+            padding: 5px;
+            font-size: 1rem;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-bar i {
+            color: var(--text-color-light);
+            margin-right: 10px;
+        }
+
+        .section {
+            display: none;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="email"],
+        textarea,
+        select {
+            padding: 0.8rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="email"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--accent-color);
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            background: var(--accent-color);
+            color: var(--text-color-light);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--highlight-color);
+            transform: scale(1.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        th, td {
+            border: 1px solid var(--primary-color);
+            padding: 1rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            background-color: var(--highlight-color);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-bar {
+                width: 100%;
+                margin-top: 10px;
+                margin-right: 0;
+            }
+
+            .user-info {
+                margin-top: 10px;
+            }
+        }
+
+        #settings {
+    display: none; /* Hidden by default */
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+#settings.active {
+    display: block; /* Show when 'active' class is added */
+}
+
+.settings-panel {
+    margin-top: 20px;
+}
+
+.setting-item {
+    margin-bottom: 15px;
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+#settings {
+    display: none; /* Hidden by default */
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+#settings.active {
+    display: block; /* Show when 'active' class is added */
+}
+
+.settings-panel {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.setting-item {
+    margin-bottom: 15px;
+}
+
+.setting-item label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.setting-item input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.setting-item button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.setting-item button:hover {
+    background-color: #0056b3;
+}
+
+#password-feedback {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ff0000;
+}
+
+
+
+
+
+
+
+/* General Settings Layout */
+#settings {
+    display: none;
+    padding: 30px;
+    background-color: #f9f9f9;
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Make settings visible when active */
+#settings.active {
+    display: block;
+}
+
+/* Tab buttons styling */
+.settings-tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+.tab-button {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: #141d2b;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.tab-button.active {
+    background-color: #232f3b;
+    color: #ddf2ff;
+}
+
+.tab-button:hover {
+    background-color: #011c32;
+}
+
+/* Settings panels */
+.settings-panels {
+    padding: 20px;
+    background-color: #03273d;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Panel visibility */
+.settings-panel {
+    display: none;
+    padding: 20px;
+}
+
+/* Active panel */
+.settings-panel.active {
+    display: block;
+}
+
+h3 {
+    font-size: 22px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Form fields styling */
+.setting-item {
+    margin-bottom: 20px;
+}
+
+.setting-item label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #144282;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.setting-item input[type="text"],
+.setting-item input[type="email"],
+.setting-item input[type="password"],
+.setting-item input[type="checkbox"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.setting-item input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+/* Submit button styling */
+button[type="submit"] {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #16283a;
+}
+
+button[type="button"] {
+    padding: 12px 20px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="button"]:hover {
+    background-color: #27ae60;
+}
+
+/* Dark Mode Support */
+body.dark-mode {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+body.dark-mode #settings {
+    background-color: #34495e;
+}
+
+body.dark-mode .tab-button {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+body.dark-mode .tab-button.active {
+    background-color: #3498db;
+    color: #fff;
+}
+
+body.dark-mode .settings-panel {
+    background-color: #2c3e50;
+}
+
+body.dark-mode .setting-item input[type="text"],
+body.dark-mode .setting-item input[type="email"],
+body.dark-mode .setting-item input[type="password"] {
+    background-color: #34495e;
+    color: #ecf0f1;
+    border: 1px solid #4c898e;
+}
+
+.chart-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+
+
+
+        
+    /* Add these styles to the existing <style> tag */
+    .stats-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .stat-card {
+        flex: 1;
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 15px; /* Updated padding */
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin: 0 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-card i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: var(--primary-color);
+    }
+
+    .stat-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        color: var(--primary-color);
+    }
+
+    .stat-card p {
+        font-size: 0.9rem;
+        color: var(--text-color);
+    }
+
+
+
+
+
+
+
+
+
+    .profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f0f2f5;
+    border-radius: 8px;
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.profile-info {
+    width: 100%;
+    max-width: 400px;
+}
+
+.profile-info p {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.profile-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.profile-actions button {
+    flex: 0 1 auto;
+}
+
+#update-profile-form {
+    margin-top: 20px;
+    display: none;
+}
+
+#update-profile-form.active {
+    display: block;
+}
+
+
+.profile-picture-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
+}
+
+.change-avatar-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: var(--accent-color);
+    color: var(--text-color-light);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.change-avatar-btn:hover {
+    background-color: var(--highlight-color);
+}
+</style>
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>BARANGAY INFORMATION MANAGEMENT SYSTEM</h2>
+            </div>
+            <div class="admin-info">
+                <img src="mayang.jpg" alt="Admin Avatar" class="admin-avatar">
+                <p>ADMINISTRATOR</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-home"></i> DASHBOARD</a></li>
+                <li><a href="#" data-section="manage-residents"><i class="fas fa-users"></i> RESIDENTS</a></li>
+                <li><a href="#" data-section="request-certificate"><i class="fas fa-file-alt"></i> CERTIFICATE REQUEST</a></li>
+                <li><a href="#" data-section="manage-announcements"><i class="fas fa-bullhorn"></i> ANNOUNCEMENT</a></li>
+                <li><a href="#" class="settings" data-section="settings"><i class="fas fa-cog"></i> SETTINGS</a></li>
+                <li><a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <h1 class="dashboard-title">DASHBOARD</h1>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="user-info">
+                    <p>TODAY IS: <span id="current-date"></span></p>
+                    <p style="margin-left: 20px;">nelsonbalneg <i class="fas fa-chevron-down"></i></p>
+                </div>
+            </div>
+
+            <div class="section active" id="dashboard">
+                <h2>Dashboard</h2>
+                <div class="chart-container">
+                    <canvas id="statisticsChart"></canvas>
+                </div>
+                <div class="stats-row">  <!-- Changed from stats-grid -->
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h3 id="total-residents">0</h3>
+                        <p>Total Residents</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3 id="new-blots">0</h3>
+                        <p>New Blots</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle"></i>
+                        <h3 id="served-clearances">0</h3>
+                        <p>Served Clearances</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-clock"></i>
+                        <h3 id="last-updated">N/A</h3>
+                        <p>Last Updated</p>
+                    </div>
+                </div>
+              
+            </div>
+
+           
+            <div class="section" id="manage-residents">
+                <h2>Manage Residents</h2>
+                <form id="add-resident-form">
+                    <input type="text" id="resident-id" placeholder="ID" required>
+                    <input type="text" id="resident-name" placeholder="Name" required>
+                    <input type="text" id="resident-address" placeholder="Address" required>
+                    <input type="date" id="resident-birthday" required>
+                    <input type="text" id="resident-contact" placeholder="Contact" required>
+                    <select id="resident-sex" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                    <button type="submit">Add Resident</button>
+                </form>
+                <table id="residents-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>Birthday</th>
+                            <th>Contact</th>
+                            <th>Sex</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="section" id="request-certificate">
+                <h2>Request Certificate</h2>
+                <form id="certificate-request-form">
+                    <input type="text" id="Type of Certificate" placeholder="Certificate Type" required>
+                    <input type="text" id="Resident ID" placeholder="Resident ID" required>
+                    <input type="text" id="Purpose" placeholder="Purpose" required>
+                    <input type="text" id="Status" placeholder="Purpose" required>
+                    <input type="text" id="Date" placeholder="Purpose" required>
+                    <input type="text" id="Actions" placeholder="Purpose" required>
+
+
+
+                    <button type="submit">Request Certificate</button>
+                </form>
+                <table id="certificate-requests-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Type</th>
+                            <th>Resident ID</th>
+                            <th>Purpose</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="section" id="manage-announcements">
+                <h2>Manage Announcements</h2>
+                <form id="announcement-form">
+                    <input type="text" id="announcement-title" placeholder="Announcement Title" required>
+                    <textarea id="announcement-content" placeholder="Announcement Content" required></textarea>
+                    <button type="submit">Post Announcement</button>
+                </form>
+                <table id="announcements-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Title</th>
+                            <th>Content</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="settings">
+                <h2>Settings</h2>
+                <div class="settings-tabs">
+                    <button class="tab-button active" data-tab="account">Account</button>
+                    <button class="tab-button" data-tab="password">Password</button>
+                    <button class="tab-button" data-tab="notifications">Notifications</button>
+                    <button class="tab-button" data-tab="help">Help</button>
+                </div>
+            
+                <div class="settings-panels">
+                    <!-- Account Settings Panel -->
+                    <div class="settings-panel" id="account">
+                        <h3>Account Settings</h3>
+                        <form>
+                            <div class="setting-item">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" placeholder="Enter new username">
+                            </div>
+                            <div class="setting-item">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" placeholder="Enter new email">
+                            </div>
+                            <button type="submit">Save Changes</button>
+                        </form>
+                    </div>
+            
+                    <!-- Password Settings Panel -->
+                    <div class="settings-panel" id="password">
+                        <h3>Password Settings</h3>
+                        <form>
+                            <div class="setting-item">
+                                <label for="current-password">Current Password</label>
+                                <input type="password" id="current-password" placeholder="Enter current password">
+                            </div>
+                            <div class="setting-item">
+                                <label for="new-password">New Password</label>
+                                <input type="password" id="new-password" placeholder="Enter new password">
+                            </div>
+                            <div class="setting-item">
+                                <label for="confirm-password">Confirm Password</label>
+                                <input type="password" id="confirm-password" placeholder="Confirm new password">
+                            </div>
+                            <button type="submit">Update Password</button>
+                        </form>
+                    </div>
+            
+                    <!-- Notifications Settings Panel -->
+                    <div class="settings-panel" id="notifications">
+                        <h3>Notification Settings</h3>
+                        <form>
+                            <div class="setting-item">
+                                <label for="email-notifications">Email Notifications</label>
+                                <input type="checkbox" id="email-notifications" checked> Enable Email Notifications
+                            </div>
+                            <div class="setting-item">
+                                <label for="sms-notifications">SMS Notifications</label>
+                                <input type="checkbox" id="sms-notifications"> Enable SMS Notifications
+                            </div>
+                            <button type="submit">Save Notification Settings</button>
+                        </form>
+                    </div>
+            
+                    <!-- Help Settings Panel -->
+                    <div class="settings-panel" id="help">
+                        <h3>Help & Support</h3>
+                        <p>If you need assistance, please reach out to our support team at <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="acdfd9dcdcc3ded8ecc9d4cdc1dcc0c982cfc3c1">[email&#160;protected]</a>.</p>
+                        <button>Contact Support</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <button class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        
+// Add this to the existing script tag, after the chart creation
+document.addEventListener('DOMContentLoaded', function() {
+        // Sample data - replace with actual data fetching logic
+        const stats = {
+            totalResidents: 5000,
+            newBlots: 50,
+            servedClearances: 200,
+            lastUpdated: new Date().toLocaleString()
+        };
+
+        // Update the statistics
+        document.getElementById('total-residents').textContent = stats.totalResidents;
+        document.getElementById('new-blots').textContent = stats.newBlots;
+        document.getElementById('served-clearances').textContent = stats.servedClearances;
+        document.getElementById('last-updated').textContent = stats.lastUpdated;
+    });
+
+        
+        // Create the pie chart
+    const ctx = document.getElementById('statisticsChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Total Residents', 'New Blots', 'Served Clearances'],
+            datasets: [{
+                data: [5000, 50, 200], // Replace with actual data
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                title: {
+                    display: true,
+                    text: 'Barangay Statistics'
+                }
+            }
+        }
+    });
+        
+
+         // Add event listener to logout button
+         document.querySelector('.logout').addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent the default anchor behavior
+            window.location.href = "form.html"; // Redirect to form.html
+        });
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const panels = document.querySelectorAll('.settings-panel');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+
+            // Remove active class from all buttons
+            tabButtons.forEach(button => button.classList.remove('active'));
+            // Add active class to the clicked button
+            this.classList.add('active');
+
+            // Hide all panels
+            panels.forEach(panel => panel.classList.remove('active'));
+            // Show the selected panel
+            document.getElementById(tabName).classList.add('active');
+        });
+    });
+});
+
+
+
+
+
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+    // Event listener for settings button to toggle visibility
+    document.querySelector('.settings').addEventListener('click', function(e) {
+        e.preventDefault();
+        const settingsSection = document.getElementById('settings');
+        settingsSection.classList.toggle('active');
+        document.querySelector('.dashboard-title').textContent = "Settings";
+    });
+
+    // Password change form submission
+    const changePasswordForm = document.getElementById('change-password-form');
+    const passwordFeedback = document.getElementById('password-feedback');
+
+    changePasswordForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const oldPassword = document.getElementById('old-password').value;
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        // Validate password inputs
+        if (newPassword !== confirmPassword) {
+            passwordFeedback.textContent = "New password and confirmation do not match.";
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            passwordFeedback.textContent = "New password must be at least 8 characters long.";
+            return;
+        }
+
+        // Assuming the old password is correct, the new password is valid
+        passwordFeedback.textContent = "Password successfully changed!";
+        passwordFeedback.style.color = "#28a745"; // Green for success
+
+        // Reset form fields
+        changePasswordForm.reset();
+    });
+});
+
+        // Event listener for the Settings button
+document.querySelector('.settings').addEventListener('click', function(e) {
+    e.preventDefault();
+    const settingsSection = document.getElementById('settings');
+    
+    // Toggle the 'active' class to show/hide settings
+    settingsSection.classList.toggle('active');
+    
+    // Optionally, you can update the text in the dashboard title to match the clicked section
+    document.querySelector('.dashboard-title').textContent = "Settings";
+});
+
+        document.addEventListener('DOMContentLoaded', function() {
+    // Residents Management
+    const residents = [];
+    const addResidentForm = document.getElementById('add-resident-form');
+    const residentsTable = document.getElementById('residents-table').getElementsByTagName('tbody')[0];
+
+    addResidentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newResident = {
+            id: document.getElementById('resident-id').value,
+            name: document.getElementById('resident-name').value,
+            address: document.getElementById('resident-address').value,
+            birthday: document.getElementById('resident-birthday').value,
+            contact: document.getElementById('resident-contact').value,
+            sex: document.getElementById('resident-sex').value
+        };
+        residents.push(newResident);
+        renderResidentsTable();
+        this.reset();
+    });
+
+    function renderResidentsTable() {
+        residentsTable.innerHTML = '';
+        residents.forEach((resident, index) => {
+            const row = residentsTable.insertRow();
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${resident.id}</td>
+                <td>${resident.name}</td>
+                <td>${resident.address}</td>
+                <td>${resident.birthday}</td>
+                <td>${resident.contact}</td>
+                <td>${resident.sex}</td>
+            `;
+        });
+    }
+
+    // Certificate Requests
+    const certificateRequests = [];
+    const certificateRequestForm = document.getElementById('certificate-request-form');
+    const certificateRequestsTable = document.getElementById('certificate-requests-table').getElementsByTagName('tbody')[0];
+
+    certificateRequestForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newRequest = {
+            type: document.getElementById('Type of Certificate').value, //Corrected ID
+            residentId: document.getElementById('Resident ID').value, //Corrected ID
+            purpose: document.getElementById('Purpose').value, //Corrected ID
+            status: 'Pending',
+            date: new Date().toLocaleDateString()
+        };
+        certificateRequests.push(newRequest);
+        renderCertificateRequestsTable();
+        this.reset();
+    });
+
+    function renderCertificateRequestsTable() {
+        certificateRequestsTable.innerHTML = '';
+        certificateRequests.forEach((request, index) => {
+            const row = certificateRequestsTable.insertRow();
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${request.type}</td>
+                <td>${request.residentId}</td>
+                <td>${request.purpose}</td>
+                <td>${request.status}</td>
+                <td>${request.date}</td>
+                <td>
+                    <button onclick="approveRequest(${index})">Approve</button>
+                    <button onclick="rejectRequest(${index})">Reject</button>
+                </td>
+            `;
+        });
+    }
+
+    window.approveRequest = function(index) {
+        certificateRequests[index].status = 'Approved';
+        renderCertificateRequestsTable();
+    };
+
+    window.rejectRequest = function(index) {
+        certificateRequests[index].status = 'Rejected';
+        renderCertificateRequestsTable();
+    };
+
+    // Announcements
+    const announcements = [];
+    const announcementForm = document.getElementById('announcement-form');
+    const announcementsTable = document.getElementById('announcements-table').getElementsByTagName('tbody')[0];
+
+    announcementForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newAnnouncement = {
+            title: document.getElementById('announcement-title').value,
+            content: document.getElementById('announcement-content').value,
+            date: new Date().toLocaleDateString()
+        };
+        announcements.push(newAnnouncement);
+        renderAnnouncementsTable();
+        this.reset();
+    });
+
+    function renderAnnouncementsTable() {
+        announcementsTable.innerHTML = '';
+        announcements.forEach((announcement, index) => {
+            const row = announcementsTable.insertRow();
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${announcement.title}</td>
+                <td>${announcement.content}</td>
+                <td>${announcement.date}</td>
+                <td>
+                    <button onclick="editAnnouncement(${index})">Edit</button>
+                    <button onclick="deleteAnnouncement(${index})">Delete</button>
+                </td>
+            `;
+        });
+    }
+
+    window.editAnnouncement = function(index) {
+        // Implement edit functionality
+        console.log('Edit announcement:', announcements[index]);
+    };
+
+    window.deleteAnnouncement = function(index) {
+        announcements.splice(index, 1);
+        renderAnnouncementsTable();
+    };
+
+    // Navigation
+    const menuLinks = document.querySelectorAll('.sidebar-menu a');
+    const sections = document.querySelectorAll('.section');
+
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const sectionId = this.getAttribute('data-section');
+            
+            menuLinks.forEach(link => link.classList.remove('active'));
+            this.classList.add('active');
+
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelector('.dashboard-title').textContent = this.textContent.trim();
+        });
+    });
+
+    // Dark mode toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+
+    darkModeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        const icon = darkModeToggle.querySelector('i');
+        icon.classList.toggle('fa-moon');
+        icon.classList.toggle('fa-sun');
+    });
+
+    // Display current date
+    const currentDateElement = document.getElementById('current-date');
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString();
+    currentDateElement.textContent = formattedDate;
+
+    // Initialize tables
+    renderResidentsTable();
+    renderCertificateRequestsTable();
+    renderAnnouncementsTable();
+});
+    </script>
+</body>
+</html>
+
